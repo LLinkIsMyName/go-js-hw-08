@@ -67,8 +67,9 @@ const images = [
 
 const galleryContainer = document.querySelector(".gallery");
 
-const markup = images.map(({preview, original, description}) => {
-    return `<li class="gallery-item">
+const markup = images
+    .map(({ preview, original, description }) => {
+        return `<li class="gallery-item">
     <a class="gallery-link" href="${original}">
       <img
         class="gallery-image"
@@ -78,7 +79,7 @@ const markup = images.map(({preview, original, description}) => {
       />
     </a>
     </li>`;
-}).join("");
+    }).join("");
 
 galleryContainer.innerHTML = markup;
 
@@ -89,7 +90,7 @@ galleryContainer.addEventListener("click", (e) => {
     if (e.target.nodeName === "IMG") {
         const largeImageUrl = e.target.dataset.source;
         console.log(largeImageUrl);
-        
+
         const originalSrc = e.target.dataset.source;
         instance = basicLightbox.create(`<img width="1112" height="640" src="${originalSrc}">`);
         instance.show();
@@ -100,7 +101,7 @@ galleryContainer.addEventListener("click", (e) => {
     }
 });
 
-function isEscapeKey(e){
+function isEscapeKey(e) {
     const isEscapeKey = e.key === "Escape";
     if (isEscapeKey) {
         instance.close();

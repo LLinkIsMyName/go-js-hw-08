@@ -64,56 +64,43 @@ const images = [
     },
 ];
 
-function createGalleryItem(image) {
-    const galleryItem = document.createElement("li");
-    galleryItem.classList.add("gallery-item");
-
-    const link = document.createElement("a");
-    link.classList.add("gallery-link");
-    link.href = image.original;
-
-    const img = document.createElement("img");
-    img.classList.add("gallery-image");
-    img.src = image.preview;
-    img.alt = image.description;
-    img.dataset.source = image.original;
-
-    link.appendChild(img);
-    galleryItem.appendChild(link);
-
-    return galleryItem;
-}
-
-function renderGallery() {
-    const galleryContainer = document.querySelector(".gallery")
-
-    images.forEach((image) => {
-        const galleryItem = createGalleryItem(image);
-        galleryContainer.appendChild(galleryItem);
-    });
-}
-
-renderGallery();
 
 const galleryContainer = document.querySelector(".gallery");
 
+const markup = images.map(({preview, original, description}) => {
+    return `<li class="gallery-item">
+    <a class="gallery-link" href="${original}">
+      <img
+        class="gallery-image"
+        src="${preview}"
+        data-source="${original}"
+        alt="${description}"
+      />
+    </a>
+    </li>`;
+}).join("");
+
+galleryContainer.innerHTML = markup;
+
+let instance;
+
 galleryContainer.addEventListener("click", (e) => {
     e.preventDefault();
-
     if (e.target.nodeName === "IMG") {
         const largeImageUrl = e.target.dataset.source;
-
-        const instance = basicLightbox.create(` <img src="${largeImageUrl}" alt="Large Image">`);
-
+        console.log(largeImageUrl);
+        instance = basicLightbox.create(`<img width="1112" height="640" src="${largeImageUrl}"`);
         instance.show();
+        document.addEventListener("keydown", isEscapeKey);
+        instance.onClose(() => {
+            document.removeEventListener("keydown", isEscapeKey);
+        });
     }
 });
 
-document.addEventListener("keydown", (e) => {
+function isEscapeKey(e){
     const isEscapeKey = e.key === "Escape";
-
     if (isEscapeKey) {
-        basicLightbox.close();
+        instance.close();
     }
-})
-
+};

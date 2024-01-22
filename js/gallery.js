@@ -70,16 +70,17 @@ const galleryContainer = document.querySelector(".gallery");
 const markup = images
     .map(({ preview, original, description }) => {
         return `<li class="gallery-item">
-    <a class="gallery-link" href="${original}">
-      <img
-        class="gallery-image"
-        src="${preview}"
-        data-source="${original}"
-        alt="${description}"
-      />
-    </a>
+      <a class="gallery-link" href="${original}">
+        <img
+          class="gallery-image"
+          src="${preview}"
+          data-source="${original}"
+          alt="${description}"
+        />
+      </a>
     </li>`;
-    }).join("");
+    })
+    .join("");
 
 galleryContainer.innerHTML = markup;
 
@@ -92,18 +93,21 @@ galleryContainer.addEventListener("click", (e) => {
         console.log(largeImageUrl);
 
         const originalSrc = e.target.dataset.source;
-        instance = basicLightbox.create(`<img width="1112" height="640" src="${originalSrc}">`);
+        const altDescription = e.target.dataset.alt;
+
+        instance = basicLightbox.create(`<img src="${originalSrc}" alt="${altDescription}">`);
         instance.show();
-        document.addEventListener("keydown", isEscapeKey);
-        instance.onClose(() => {
-            document.removeEventListener("keydown", isEscapeKey);
+        document.addEventListener("keydown", closeOnEscapeKeyPress);
+
+        instance.on('close', () => {
+            document.removeEventListener("keydown", closeOnEscapeKeyPress);
         });
     }
 });
 
-function isEscapeKey(e) {
+function closeOnEscapeKeyPress(e) {
     const isEscapeKey = e.key === "Escape";
     if (isEscapeKey) {
         instance.close();
     }
-};
+}

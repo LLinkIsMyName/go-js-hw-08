@@ -89,7 +89,9 @@ galleryContainer.addEventListener("click", (e) => {
     if (e.target.nodeName === "IMG") {
         const largeImageUrl = e.target.dataset.source;
         console.log(largeImageUrl);
-        instance = basicLightbox.create(`<img width="1112" height="640" src="${largeImageUrl}"`);
+        
+        const originalSrc = e.target.dataset.source;
+        instance = basicLightbox.create(`<img width="1112" height="640" src="${originalSrc}">`);
         instance.show();
         document.addEventListener("keydown", isEscapeKey);
         instance.onClose(() => {

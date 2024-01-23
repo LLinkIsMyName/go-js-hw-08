@@ -64,47 +64,58 @@ const images = [
     },
 ];
 
+const gallery = document.querySelector(".gallery");
+const galleryMarkup = images
+    .map(
+        (image) =>
+            `<li class="gallery-item">
+  <a class="gallery-link" href="${image.original}">
+    <img
+      class="gallery-image"
+      src="${image.preview}"
+      data-source="${image.original}"
+      alt="${image.description}"
+    />
+  </a>
+</li>`
+    ).join("");
 
-const galleryContainer = document.querySelector(".gallery");
-
-const markup = images
-    .map(({ preview, original, description }) => {
-        return `<li class="gallery-item">
-      <a class="gallery-link" href="${original}">
-        <img
-          class="gallery-image"
-          src="${preview}"
-          data-source="${original}"
-          alt="${description}"
-        />
-      </a>
-    </li>`;
-    })
-    .join("");
-
-galleryContainer.innerHTML = markup;
+gallery.innerHTML = galleryMarkup;
 
 let isLightboxOpen = false;
-let instance = null;
+let instance;
 
-gallery.addEventListener("click", (event) => {
-  event.preventDefault();
-  if (event.target.nodeName !== "IMG") {
-    return;
-  }
-  instance = basicLightbox.create(
-    `<img src="${event.target.dataset.source}" width="800" height="600">`
-  );
-  instance.show();
-  isLightboxOpen = true;
-  document.addEventListener("keydown", handleKeyDown);
+gallery.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    if (e.target.classList.contains("gallery-image")) {
+        const originalSrc = e.target.dataset.source;
+        const altDescription = e.target.alt;
+
+        instance = basicLightbox.create(
+            `<img src="${originalSrc}" alt="${altDescription}">`,
+            {
+                onShow: () => {
+                    isLightboxOpen = true;
+                    document.addEventListener("keydown", closeOnEscapeKeyPress);
+                },
+                onClose: () => {
+                    isLightboxOpen = false;
+                    document.removeEventListener("keydown", closeOnEscapeKeyPress);
+                }
+            }
+        );
+
+        instance.show();
+    } else {
+        console.log(`Click on an image to view!`); // перевірка чи клік був саме на картинці
+    }
 });
 
-function handleKeyDown(event) {
-  if (event.code === "Escape" && isLightboxOpen === true) {
-    instance.close();
-    isLightboxOpen = false;
-    console.log(`lightbox was closed`); // перевірка того, що eventListener на keydown(escape) працює лише коли зображення відкрите
-    document.removeEventListener("keydown", handleKeyDown);
-  }
+function closeOnEscapeKeyPress(e) {
+    if (e.code === "Escape" && isLightboxOpen === true) {
+        instance.close();
+        console.log(`Modal view is closed!`); // перевірка закриття модалки з клавіші escape
+        document.removeEventListener("keydown", closeOnEscapeKeyPress);
+    }
 }

@@ -86,23 +86,24 @@ galleryContainer.innerHTML = markup;
 
 let instance;
 
-galleryContainer.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    if (e.target.classList.contains("gallery-image")) {
-        const largeImageUrl = e.target.dataset.source;
-        console.log(largeImageUrl);
-
-        const originalSrc = e.target.dataset.source;
-        const altDescription = e.target.alt;
-
-        const instance = basicLightbox.create(`<img src="${originalSrc}" alt="${altDescription}">`, {
-            onShow: () => {
-                document.addEventListener("keydown", closeOnEscapeKeyPress);
-            },
-            onClose: () => {
-                document.removeEventListener("keydown", closeOnEscapeKeyPress);
-            },
-        });
-    }
+gallery.addEventListener("click", (event) => {
+  event.preventDefault();
+  if (event.target.nodeName !== "IMG") {
+    return;
+  }
+  instance = basicLightbox.create(
+    `<img src="${event.target.dataset.source}" width="800" height="600">`
+  );
+  instance.show();
+  isLightboxOpen = true;
+  document.addEventListener("keydown", handleKeyDown);
 });
+
+function handleKeyDown(event) {
+  if (event.code === "Escape" && isLightboxOpen === true) {
+    instance.close();
+    isLightboxOpen = false;
+    console.log(`lightbox was closed`); // перевірка того, що eventListener на keydown(escape) працює лише коли зображення відкрите
+    document.removeEventListener("keydown", handleKeyDown);
+  }
+}

@@ -96,7 +96,7 @@ galleryContainer.addEventListener("click", (e) => {
         const originalSrc = e.target.dataset.source;
         const altDescription = e.target.alt;
 
-        instance = basicLightbox.create(`<img src="${originalSrc}" alt="${altDescription}">`, {
+        const instance = basicLightbox.create(`<img src="${originalSrc}" alt="${altDescription}">`, {
             onShow: () => {
                 document.addEventListener("keydown", closeOnEscapeKeyPress);
             },

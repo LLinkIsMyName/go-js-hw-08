@@ -84,7 +84,8 @@ const markup = images
 
 galleryContainer.innerHTML = markup;
 
-let instance;
+let isLightboxOpen = false;
+let instance = null;
 
 gallery.addEventListener("click", (event) => {
   event.preventDefault();

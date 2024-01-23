@@ -88,26 +88,21 @@ let instance;
 
 galleryContainer.addEventListener("click", (e) => {
     e.preventDefault();
-    if (e.target.nodeName === "IMG") {
+
+    if (e.target.classList.contains("gallery-image")) {
         const largeImageUrl = e.target.dataset.source;
         console.log(largeImageUrl);
 
         const originalSrc = e.target.dataset.source;
-        const altDescription = e.target.dataset.alt;
+        const altDescription = e.target.alt;
 
-        instance = basicLightbox.create(`<img src="${originalSrc}" alt="${altDescription}">`);
-        instance.show();
-        document.addEventListener("keydown", closeOnEscapeKeyPress);
-
-        instance.on('close', () => {
-            document.removeEventListener("keydown", closeOnEscapeKeyPress);
+        instance = basicLightbox.create(`<img src="${originalSrc}" alt="${altDescription}">`, {
+            onShow: () => {
+                document.addEventListener("keydown", closeOnEscapeKeyPress);
+            },
+            onClose: () => {
+                document.removeEventListener("keydown", closeOnEscapeKeyPress);
+            },
         });
     }
 });
-
-function closeOnEscapeKeyPress(e) {
-    const isEscapeKey = e.key === "Escape";
-    if (isEscapeKey) {
-        instance.close();
-    }
-}
